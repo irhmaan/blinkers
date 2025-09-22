@@ -1,17 +1,11 @@
 import 'package:loggy/loggy.dart';
 
 class Logger {
-  // Singleton instance
-  static final Logger _instance = Logger._internal();
+  final Loggy _loggy;
 
-  factory Logger() => _instance;
-
-  Logger._internal() {
-    // Initialize Loggy only once
+  Logger(String name) : _loggy = Loggy(name) {
     Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
   }
-
-  final _loggy = Loggy("CVS Logger");
 
   void debug(String message) => _loggy.debug(message);
   void info(String message) => _loggy.info(message);

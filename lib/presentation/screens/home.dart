@@ -1,18 +1,19 @@
+import 'package:cvs/core/global.dart';
+import 'package:cvs/core/tray_manager.dart';
 import 'package:cvs/presentation/widgets/row_textbox.dart';
 import 'package:cvs/utils/common_utils.dart';
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key, required this.title});
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  bool _isOn = false;
-  bool isMinimized = false;
+class _HomePageState extends State<HomePage> {
+  final winMgr = SystemTrayService();
 
   @override
   Widget build(BuildContext context) {
@@ -56,14 +57,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     RowTextWidget(
                       label: 'Run in background',
                       hintText: 'Allow the app to run in background',
-                      value: _isOn,
-                      onChanged: (v) => setState(() => _isOn = v),
+                      value: Global.startWithSystem,
+                      onChanged:
+                          (v) => setState(() {
+                            winMgr.enableAutoStartWindows();
+                          }),
                     ),
                     // spacing between rows
                     RowTextWidget(
                       label: 'Minimize when closed',
-                      value: isMinimized,
-                      onChanged: (p0) => setState(() => isMinimized = p0),
+                      value: Global.isMinimizeToTray,
+                      onChanged:
+                          (p0) => setState(() {
+                            winMgr.enableDisable();
+                          }),
                       hintText: 'Minimize the app to system tray when closed',
                     ),
                   ],

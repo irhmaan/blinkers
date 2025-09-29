@@ -2,50 +2,48 @@
 import 'package:cvs/presentation/widgets/slide_switch.dart';
 import 'package:flutter/material.dart';
 
-class RowTextWidget extends StatefulWidget {
+class RowTextWidget extends StatelessWidget {
   final String label;
   final String hintText;
   final void Function(bool)? onChanged;
   final bool value;
+  final bool show;
 
   const RowTextWidget({
     super.key,
     required this.label,
     required this.hintText,
     this.onChanged,
-    this.value = false,
+    required this.value,
+    this.show = true,
   });
 
   @override
-  State<RowTextWidget> createState() => _RowTextWidgetState();
-}
-
-class _RowTextWidgetState extends State<RowTextWidget> {
-  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1.0),
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
       child: GestureDetector(
-        onTap: () => widget.onChanged?.call(!widget.value),
+        onTap: () => onChanged?.call(!value),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween, // pushes apart
           children: [
             Tooltip(
               preferBelow: false,
-              message: widget.hintText,
-              child: Text(
-                widget.label,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+              message: hintText,
+              child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
             ),
-            CustomCupertinoSwitch(
-              value: widget.value,
-              onChanged: widget.onChanged,
-              activeColor: Colors.green,
-              inactiveColor: Colors.grey.shade300,
-              thumbColor: Colors.white,
-              width: 38,
-              height: 16,
+            Visibility(
+              visible: show,
+              child: CustomCupertinoSwitch(
+                // disabled: disabled,
+                value: value,
+                onChanged: onChanged,
+                activeColor: Colors.green,
+                inactiveColor: Colors.grey.shade300,
+                thumbColor: Colors.white,
+                width: 38,
+                height: 16,
+              ),
             ),
           ],
         ),

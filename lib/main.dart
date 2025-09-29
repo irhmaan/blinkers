@@ -1,18 +1,22 @@
 import 'package:cvs/core/app_theme.dart';
-import 'package:cvs/core/global.dart';
 import 'package:cvs/core/tray_manager.dart';
 import 'package:cvs/presentation/screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Global.getConfig();
   final trayService = SystemTrayService();
-  trayService.initWindowManager();
   await trayService.initTray();
+  await trayService.initWindowManager();
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider<SystemTrayService>.value(
+      value: trayService,
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -25,7 +29,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      home: const HomePage(title: 'CVS'),
+      home: const Home(),
     );
   }
 }

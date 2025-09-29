@@ -1,0 +1,103 @@
+name: Windows CI
+
+on:
+  push:
+    branches: [dev] # build on push to dev
+  pull_request:
+    branches: [main] # trigger on PRs to main
+    types: [closed] # only when PR is closed ( merged or not)
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  build-dev:
+    name: Build Dev (Windows)
+    runs-on: windows-latest # Windows runner
+    #only dev pushes
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.0" # Flutter version
+          channel: "stable"
+
+      - name: Cache Flutter pub
+        uses: actions/cache@v3
+        with:
+          path: |
+            .pub-cache
+            ~\.pub-cache
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build Windows executable
+        run: flutter build windows --release
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-app-release-dev
+          path: build/windows/x64/runner/Release # Path to Windows build output
+          retention-days: 7 # Keep artifacts for 7 days
+
+  build-and-deploy-main:
+    name: Build and delpoy main (Windows)
+    runs-on: windows-latest
+    #Run only on PR merge from dev to main
+    if: github.event_name =='pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'dev'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.x"
+          channel: "stable"
+
+      - name: Cache Flutter pub
+        uses: actions/cache@v3
+        with:
+          path: |
+            .pub-cache
+            ~\.pub-cache
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run static analysis
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build Windows executable
+        run: flutter build windows --release
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-app-release-main
+          path: build/windows/x64/runner/Release
+          retention-days: 7
+      - name: Zip release folder
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath windows-release.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+          files: windows-release.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

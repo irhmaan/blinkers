@@ -65,7 +65,7 @@ class SystemTrayService extends ChangeNotifier
 
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
-      Global.startWithSystem
+      Global.isTimerRunning
           ? await windowManager.hide()
           : await windowManager.focus();
 

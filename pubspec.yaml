@@ -44,6 +44,7 @@ dependencies:
   shared_preferences: ^2.5.3
   msix: ^3.16.12
   ffi: ^2.1.4
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

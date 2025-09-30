@@ -1,16 +1,12 @@
 # cvs
 
-A new Flutter project.
+A simple app to avoid Computer Vision Syndrome symptoms reminind user to take frequent breaks on basis of 20-20-20 rule.
 
-## Getting Started
+## Status
 
-This project is a starting point for a Flutter application.
+Early dev and mostly testing it on my own to polish and implement feature as per my own need.
 
-A few resources to get you started if this is your first Flutter project:
+## TODO:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Support mobile platfrom.
+And linux desktop ( maybe).

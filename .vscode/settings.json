@@ -1,5 +1,6 @@
 {
   "files.associations": {
     "variant": "cpp"
-  }
+  },
+  "cmake.ignoreCMakeListsMissing": true
 }

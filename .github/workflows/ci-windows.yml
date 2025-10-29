@@ -22,7 +22,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.29.0" # Flutter version
+          flutter-version: "3.29.0"
           channel: "stable"
 
       - name: Cache Flutter pub
@@ -59,7 +59,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.x"
+          flutter-version: "3.29.0"
           channel: "stable"
 
       - name: Cache Flutter pub

@@ -18,14 +18,14 @@ class Global {
 
     logger.info("${config?.toString()}");
 
-    isMinimizeToTray = config?['config']?["isMinimizeToTray"] ?? false;
+    isTimerRunning = config?['config']?["isTimerRunning"] ?? false;
     allowRunBackground = config?['config']?["allowRunBackground"] ?? false;
     startWithSystem = config?['config']?["startWithSystem"] ?? false;
-    isTimerRunning = config?['config']?["isTimerRunning"] ?? false;
-    logger.info("Default1: $isMinimizeToTray");
-    logger.info("Default2: $allowRunBackground");
-    logger.info("Default3: $startWithSystem");
-    logger.info("Default4: $isTimerRunning");
+    isMinimizeToTray = config?['config']?["isMinimizeToTray"] ?? false;
+    logger.info("isMinimizeToTray: $isMinimizeToTray");
+    logger.info("allowRunBackground: $allowRunBackground");
+    logger.info("startWithSystem: $startWithSystem");
+    logger.info("isTimerRunning: $isTimerRunning");
   }
 
   static String getAppIcon_1() {

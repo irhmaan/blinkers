@@ -22,7 +22,7 @@ class SystemTrayService extends ChangeNotifier
     Global.getConfig();
     _checkAutoStartStatus();
   }
-
+  static final navKey = GlobalKey<NavigatorState>();
   final TrayManager _systemTray = TrayManager.instance;
   final logger = Logger("System_Tray_Service");
 
@@ -63,7 +63,7 @@ class SystemTrayService extends ChangeNotifier
       titleBarStyle: TitleBarStyle.normal,
     );
 
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
       Global.isTimerRunning
           ? await windowManager.hide()
@@ -75,13 +75,14 @@ class SystemTrayService extends ChangeNotifier
       await windowManager.setMaximumSize(fixedSize);
       windowManager.addListener(this);
     });
-
+    _isMinimizeToTray
+        ? await windowManager.setPreventClose(_isMinimizeToTray)
+        : await windowManager.setPreventClose(false);
     showHideClearBtn = await checkIfConfigExists();
   }
 
   Future<void> initTray() async {
     // Set tray icon
-    logger.info(Global.getAppIcon_2());
     await _systemTray.setIcon(
       Platform.isWindows ? Global.getAppIcon_2() : 'assets/icon/app_icon.png',
     );
@@ -250,7 +251,7 @@ class SystemTrayService extends ChangeNotifier
     }
   }
 
-  void startBackgroundTimer({int? newIntervalSeconds}) {
+  Future<void> startBackgroundTimer({int? newIntervalSeconds}) async {
     if (newIntervalSeconds != null) {
       _intervalSeconds = newIntervalSeconds;
       notifyListeners();
@@ -264,7 +265,7 @@ class SystemTrayService extends ChangeNotifier
     // Start new timer with the current _intervalSeconds (in seconds)
     _backgroundTimer = Timer.periodic(Duration(seconds: _intervalSeconds), (
       timer,
-    ) {
+    ) async {
       // Run async restoration in a separate async method
       _nextReminderTime = _nextReminderTime?.add(
         Duration(seconds: _intervalSeconds),
@@ -361,7 +362,7 @@ class SystemTrayService extends ChangeNotifier
       _startWithSystem = queryResult == ERROR_SUCCESS;
 
       if (_startWithSystem) {
-        startBackgroundTimer();
+        await startBackgroundTimer();
       }
       notifyListeners();
     } catch (e) {
@@ -472,14 +473,11 @@ class SystemTrayService extends ChangeNotifier
 
   @override
   void onWindowClose() async {
-    if (!await windowManager.isPreventClose()) {
-      await windowManager.setPreventClose(true);
-    }
-
     if (_isMinimizeToTray) {
       logger.info("Minimizing to tray");
       _isRunningInBackground = true;
       await windowManager.hide();
+      navKey.currentState?.popUntil((route) => route.isFirst);
       return; // important!
     }
 
